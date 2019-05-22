@@ -1,0 +1,46 @@
+version: '3'
+
+# Define services
+services:
+
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    expose:
+    - "2181"
+
+  kafka:
+    image: wurstmeister/kafka:2.11-2.0.0
+    depends_on:
+    - zookeeper
+    ports:
+    - "9091:9091"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9091
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+  # App Service
+  api:
+    # Configuration for building the docker image for the service
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: API/dockerfile
+    ports:
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+      - kafka
+  counter:
+    # Configuration for building the docker image for the service
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: Counter/dockerfile
+    ports:
+      - "8081:8081" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+      - kafka
+      - api
