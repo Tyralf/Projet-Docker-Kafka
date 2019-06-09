@@ -4,33 +4,31 @@ var hostname = 'localhost';
 var app = express(); 
 var testMsg = 'placeholder1';
 var myRouter = express.Router(); 
- 
-
 var bodyParser = require("body-parser"); 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 const { Kafka } = require('kafkajs')
+const fs = require('fs');
+
+let rawdata = fs.readFileSync(__dirname + '/../env.json');  
+let env = JSON.parse(rawdata);  
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['kafka_1:9091']
+  brokers: ['kafka:9091']
 })
 
 const producer = kafka.producer()
-async function asyncF() {
-    await producer.connect()
-    await producer.send({
+function asyncMessage(message) {
+    producer.connect()
+    producer.send({
     topic: 'test-topic',
     messages: [
-        { value: 'Hello KafkaJS user!' },
+        { value: message },
     ],
     })
-    await producer.disconnect()
+    producer.disconnect()
 };
-
-
-
 
 myRouter.route('/test')
 // GET
@@ -48,14 +46,14 @@ myRouter.route('/test')
 app.use(myRouter);  
 
 // Démarrer le serveur 
-app.listen(8080, function(){
-	console.log("Mon serveur fonctionne sur http://localhost:8080"); 
+app.listen(env.api.port, function(){
+	console.log("Mon serveur fonctionne sur http://localhost:" + env.api.port); 
 });
 
-asyncF();
 
 function envoiMessage(Message){
     testMsg = Message;
+    asyncMessage(Message);
 }
 function recoitMessage(){
     return testMsg

@@ -1,0 +1,6 @@
+FROM node:10
+WORKDIR /DoubleCounterApp
+COPY DoubleCounter/package.json /DoubleCounterApp
+RUN npm install
+COPY . /DoubleCounterApp
+CMD node DoubleCounter/index.js

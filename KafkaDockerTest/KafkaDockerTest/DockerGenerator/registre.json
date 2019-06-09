@@ -1,0 +1,28 @@
+{
+    "API" : {
+        "dependences" : {
+            "kafka" : "kafka",
+            "zookeeper" : "zookeeper",
+            "counter" : "counter"
+        },
+        "Type" : "Produceur"
+
+    },
+
+    "Counter" : {
+        "kafka_dependences" : {
+            "kafka" : "kafka",
+            "zookeeper" : "zookeeper"
+        },
+        "Type" : "Produceur"
+    },
+
+    "DoubleCounter" : {
+        "kafka_dependences" : {
+            "kafka" : "kafka",
+            "zookeeper" : "zookeeper"
+        },
+        "Type" : "Listener" 
+    }
+}
+    

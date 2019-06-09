@@ -1,0 +1,16 @@
+{
+  "name": "doublecounter",
+  "version": "1.0.0",
+  "description": "Count 2 by 2",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Dorian",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "kafkajs": "^1.8.0"
+  }
+}

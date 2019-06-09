@@ -1,46 +1,54 @@
 version: '3'
 
-# Define services
+# Kafka and zookeeper services
 services:
 
   zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
-    expose:
-    - "2181"
-
-  kafka:
-    image: wurstmeister/kafka:2.11-2.0.0
-    depends_on:
-    - zookeeper
+    image: 'bitnami/zookeeper:latest'
     ports:
-    - "9091:9091"
+      - '2191:2181'
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9091
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    depends_on:
-      - zookeeper
-  # App Service
+      - ZOO_SERVER_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9091:9091'
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ZOOKEEPER_CONNECT_TIMEOUT_MS=36000
+      - KAFKA_LISTENERS=PLAINTEXT://:9091
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9091
+
+  # The Services of my app
   api:
-    # Configuration for building the docker image for the service
     build:
-      context: . # Use an image built from the specified dockerfile in the current directory.
+      context: .
       dockerfile: API/dockerfile
     ports:
-      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - "8080:8080" 
     restart: unless-stopped
     depends_on:
       - zookeeper
       - kafka
-  counter:
-    # Configuration for building the docker image for the service
+
+  doublecounter:
     build:
-      context: . # Use an image built from the specified dockerfile in the current directory.
-      dockerfile: Counter/dockerfile
+      context: .
+      dockerfile: DoubleCounter/dockerfile
     ports:
-      - "8081:8081" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - "8081:8081"
     restart: unless-stopped
     depends_on:
       - zookeeper
       - kafka
       - api
+    
+      
+
+  
+ 
+
+
+   
