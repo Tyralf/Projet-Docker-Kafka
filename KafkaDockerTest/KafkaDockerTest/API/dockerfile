@@ -1,6 +1,6 @@
 FROM node:10
 WORKDIR /APIapp
-COPY API/package.json /APIapp
+COPY package.json /APIapp
 RUN npm install
 COPY . /APIapp
-CMD node API/api.js
+CMD node api.js

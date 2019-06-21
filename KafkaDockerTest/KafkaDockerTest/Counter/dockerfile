@@ -1,6 +1,6 @@
 FROM node:10
 WORKDIR /CounterApp
-COPY Counter/package.json /CounterApp
+COPY package.json /CounterApp
 RUN npm install
 COPY . /CounterApp
-CMD node Counter/counter.js
+CMD node counter.js

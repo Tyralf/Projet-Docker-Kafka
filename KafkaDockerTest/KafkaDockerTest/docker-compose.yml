@@ -1,54 +1,1 @@
-version: '3'
-
-# Kafka and zookeeper services
-services:
-
-  zookeeper:
-    image: 'bitnami/zookeeper:latest'
-    ports:
-      - '2191:2181'
-    environment:
-      - ZOO_SERVER_ID=1
-      - ALLOW_ANONYMOUS_LOGIN=yes
-  kafka:
-    image: 'bitnami/kafka:latest'
-    ports:
-      - '9091:9091'
-    environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ZOOKEEPER_CONNECT_TIMEOUT_MS=36000
-      - KAFKA_LISTENERS=PLAINTEXT://:9091
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9091
-
-  # The Services of my app
-  api:
-    build:
-      context: .
-      dockerfile: API/dockerfile
-    ports:
-      - "8080:8080" 
-    restart: unless-stopped
-    depends_on:
-      - zookeeper
-      - kafka
-
-  doublecounter:
-    build:
-      context: .
-      dockerfile: DoubleCounter/dockerfile
-    ports:
-      - "8081:8081"
-    restart: unless-stopped
-    depends_on:
-      - zookeeper
-      - kafka
-      - api
-    
-      
-
-  
- 
-
-
-   
+version: '3'services:  zookeeper:    image: 'bitnami/zookeeper:latest'    ports:      - '2191:2181'    environment:      - ZOO_SERVER_ID=1      - ALLOW_ANONYMOUS_LOGIN=yes  kafka:    image: 'bitnami/kafka:latest'    ports:      - '9091:9091'    environment:      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181      - ALLOW_PLAINTEXT_LISTENER=yes      - KAFKA_ZOOKEEPER_CONNECT_TIMEOUT_MS=36000      - KAFKA_LISTENERS=PLAINTEXT://:9091      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9091      - KAFKA_LISTENER_PORT=9091      - KAFKA_LISTENER_TIMEOUT=30000  api:    image: 'api:Dockerfile'    ports:      - "8080:8080"    restart: unless-stopped    depends_on:      - zookeeper      - kafka    environment:      - API_PORT=8080      - API_KAFKA_TOPIC=topic_test      - API_KAFKA_GROUP=test_group          counter:    image: 'counter:Dockerfile'    ports:      - "8081:8081"    restart: unless-stopped    depends_on:      - zookeeper      - kafka    environment:      - COUNTER_PORT=8081      - COUNTER_KAFKA_TOPIC=topic_test      - COUNTER_KAFKA_GROUP=test_group        

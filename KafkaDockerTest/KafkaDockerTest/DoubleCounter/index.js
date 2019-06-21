@@ -5,20 +5,15 @@ var counter = 0
 const fs = require('fs');
 const { Kafka } = require('kafkajs')
 
-let rawdata = fs.readFileSync(__dirname + '/../env.json');  
-let env = JSON.parse(rawdata);  
-
 const kafka = new Kafka({
   clientId: 'my-app',
   brokers: ['kafka:9091']
 })
 
-
-
-const consumer = kafka.consumer({ groupId: 'test-group' })
+const consumer = kafka.consumer({ groupId: ''+process.env.DOUBLECOUNTER_KAFKA_GROUP })
 const run = async () => {
   await consumer.connect()
-  await consumer.subscribe({ topic : 'test-topic' })
+  await consumer.subscribe({ topic : ''+process.env.DOUBLECOUNTER_KAFKA_TOPIC })
   await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
       counter += 2;
@@ -28,7 +23,7 @@ const run = async () => {
   })
 }
 
-setTimeout (function(){run().catch(e => console.error(`[example/consumer] ${e.message}`, e))},env.listener.kafka_connect_timeout);
+setTimeout (function(){run().catch(e => console.error(`[example/consumer] ${e.message}`, e))},30000);
 
 
 app.get('/counter', function (req, res) {
@@ -40,6 +35,6 @@ app.get('/message', function (req, res) {
 })
 
 //Launch listening server on port 8081
-app.listen(env.counter.port, function () {
-  console.log('app listening on port ' + env.counter.port + ' !')
+app.listen(process.env.DOUBLECOUNTER_PORT, function () {
+  console.log('app listening on port ' + process.env.DOUBLECOUNTER_PORT + ' !')
 })

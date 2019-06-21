@@ -10,9 +10,6 @@ app.use(bodyParser.json());
 const { Kafka } = require('kafkajs')
 const fs = require('fs');
 
-let rawdata = fs.readFileSync(__dirname + '/../env.json');  
-let env = JSON.parse(rawdata);  
-
 const kafka = new Kafka({
   clientId: 'my-app',
   brokers: ['kafka:9091']
@@ -22,7 +19,7 @@ const producer = kafka.producer()
 function asyncMessage(message) {
     producer.connect()
     producer.send({
-    topic: 'test-topic',
+    topic: process.env.API_KAFKA_TOPIC,
     messages: [
         { value: message },
     ],
@@ -46,8 +43,8 @@ myRouter.route('/test')
 app.use(myRouter);  
 
 // Démarrer le serveur 
-app.listen(env.api.port, function(){
-	console.log("Mon serveur fonctionne sur http://localhost:" + env.api.port); 
+app.listen(process.env.API_PORT, function(){
+	console.log("Mon serveur fonctionne sur http://localhost:" + process.env.API_PORT); 
 });
 
 

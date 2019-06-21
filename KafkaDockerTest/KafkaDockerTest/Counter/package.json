@@ -4,12 +4,12 @@
   "description": "counter service",
   "main": "counter.js",
   "scripts": {
-    "test": "test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dorian",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "fs": "0.0.1-security",
     "kafkajs": "^1.8.0"
   }
